@@ -1,0 +1,129 @@
+<!DOCTYPE html PUBLIC>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="es" lang="es">
+	<head>
+		<title>Preguntas y Respuestas - Jorge Ferreira</title>
+		<meta http-equiv="content-type" content="text/html;charset=utf-8" />
+		<meta name="Author" content="Jorge Ferreira">
+		<link href="https://fonts.googleapis.com/css2?family=Source+Sans+Pro:wght@600&display=swap" rel="stylesheet">
+		
+		<style type="text/css">
+			body, html{
+				text-align: center;
+				vertical-align: middle;
+				font-family: 'Source Sans Pro', sans-serif;
+				font-size: calc(1em + 1vw);
+				width: 100%;
+				height: 100%;
+				overflow: hidden;
+				background: radial-gradient(ellipse at center,  #d2ff52 0%,#91e842 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
+			}
+			#popRespuesta{
+				width: 100%;
+				height: 100%;
+				position: absolute;
+				top: 0;
+				left: 0;
+				display: none;
+			}
+			button{
+				font-size: calc(.5em + 1vw);
+				border: 4px solid black;
+				border-radius: 20px;
+				background-color: transparent;
+				cursor: pointer;
+			}
+			#puntaje{
+				font-size: calc(1em + 1vw);
+			}
+			#estadoRespuesta{
+				font-size: calc(2em + 1vw);
+			}
+		</style>
+		
+		<script type="text/javascript">
+			var puntaje = 0;
+			var azar = 0; //Índice de pregunta obtenido aleatoriamente
+			var listaPreguntas = new Array(8); //Arreglo con todas las preguntas
+			var preguntadas = new Array(8); //Arreglo donde se marcan las preguntas ya preguntadas
+			var contadorRespondidas = 0; //Cantidad de preguntas respondidas, para evitar overflow de arrays
+			function pregunta(texto, opciones, puntaje, correcta){
+				this.texto = texto;
+				this.opciones = opciones;
+				this.puntaje = puntaje;
+				this.correcta = correcta;
+			}
+			
+			function cargarPregunta(){
+				azar = Math.floor(Math.random() * listaPreguntas.length);
+				
+				while(preguntadas[azar]){ //Evitar preguntas repetidas
+					azar = Math.floor(Math.random() * listaPreguntas.length);
+				}
+				
+				document.getElementById('pregunta').innerHTML = listaPreguntas[azar].texto;
+				document.getElementById('opcionUno').innerHTML = listaPreguntas[azar].opciones[0];
+				document.getElementById('opcionDos').innerHTML = listaPreguntas[azar].opciones[1];
+				document.getElementById('opcionTres').innerHTML = listaPreguntas[azar].opciones[2];
+				
+				preguntadas[azar] = true;
+				contadorRespondidas++;
+			}
+			
+			function evaluarRespuesta(opcion){
+				if(listaPreguntas[azar].correcta == opcion){
+					puntaje += listaPreguntas[azar].puntaje;
+					document.getElementById('puntaje').innerHTML = puntaje + ' puntos';
+					
+					document.getElementById('estadoRespuesta').innerHTML = '¡Correcto!';
+					document.getElementById('popRespuesta').style.backgroundColor = 'green';
+				}else{
+					document.getElementById('estadoRespuesta').innerHTML = '¡Incorrecto!';
+					document.getElementById('popRespuesta').style.backgroundColor = 'red';
+				}
+				document.getElementById('popRespuesta').style.display = 'block';
+			}
+			
+			function siguientePregunta(){
+				if(contadorRespondidas < listaPreguntas.length){
+					//alert(contadorRespondidas + ' - ' + listaPreguntas.length);
+					cargarPregunta();
+					document.getElementById('popRespuesta').style.display = 'none';
+				}else{
+					document.getElementById('popRespuesta').innerHTML = '';
+					alert('¡Fin del juego! \nPuntaje: ' + puntaje);
+				}
+				
+			}
+						
+			listaPreguntas[0] = new pregunta("El primer videojuego con historia.", ["Super Mario Bros.", "PacMan", "Metal Gear"], 10, 0);
+			
+			listaPreguntas[1] = new pregunta("La primer consola en presentar gráficos en 3D estereoscópico.", ["Sony PlayStation", "Sega 32X", "Nintendo VirtualBoy"], 40, 2);
+			
+			listaPreguntas[2] = new pregunta("El videojuego más vendido de la historia.", ["GTA V", "Tetris", "Mario Kart"], 10, 1);
+						
+			listaPreguntas[3] = new pregunta("El primer videojuego en utilizar gráficos pre-renderizados.", ["Killer Instinct", "Mortal Kombat", "Donkey Kong Country"], 40, 2);
+						
+			listaPreguntas[4] = new pregunta("La consola más vendida de la historia.", ["Sony PlayStation 2", "Sony PlayStation", "Nintendo Wii"], 20, 0);
+						
+			listaPreguntas[5] = new pregunta("¿En que año se lanzó Pong?", ["1982", "1976", "1972"], 40, 2);
+						
+			listaPreguntas[6] = new pregunta("El primer videojuego on-line para PC.", ["World of Warcraft", "Dungeons & Dragons", "Diablo"], 40, 1);
+			
+			listaPreguntas[7] = new pregunta("La primer consola híbrida.", ["Sony PlayStation Vita", "Nintendo Wii U", "Nintendo Switch"], 40, 2);
+		</script>
+	</head>
+
+	<body onLoad="cargarPregunta()">
+		<h1>¿Cuánto sabes de videojuegos?</h1>
+		<p id="pregunta">?</p>
+		<button id="opcionUno" onClick="evaluarRespuesta(0)"></button>
+		<button id="opcionDos" onClick="evaluarRespuesta(1)"></button>
+		<button id="opcionTres" onClick="evaluarRespuesta(2)"></button>
+		<div id="popRespuesta">
+			<p id="estadoRespuesta"></p>
+			<button class="siguiente" onClick="siguientePregunta()">Siguiente</button>
+		</div>
+		
+		<p id="puntaje">0 puntos</p>
+	</body>
+</html>
